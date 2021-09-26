@@ -1,4 +1,4 @@
-import { UserService, createClient } from '../user-service';
+import { UserService, createClient, createUserIndexes } from '../user-service';
 import { MongodbSpies, mockClient } from './__mocks__/mongodb';
 
 jest.mock('mongodb');
@@ -39,16 +39,9 @@ describe('UserService', () => {
     });
   });
 
-  describe('constructor', () => {
-    it("should reference 'users' collection", async () => {
-      new UserService(mockClient, 'mock-database');
-
-      expect(collectionSpy).toHaveBeenCalledWith('users');
-      expect(databaseSpy).toHaveBeenCalledWith('mock-database');
-    });
-
+  describe('creteUserIndexes', () => {
     it('should create needed indexes', async () => {
-      new UserService(mockClient, 'mock-database');
+      const indexes = await createUserIndexes(mockClient, 'mock-database');
 
       expect(createIndexSpy).toHaveBeenCalledWith(
         'users',
@@ -60,6 +53,16 @@ describe('UserService', () => {
         { occupation: 1 },
         undefined
       );
+      expect(indexes).toEqual(['mock-index', 'mock-index']);
+    });
+  });
+
+  describe('constructor', () => {
+    it("should reference 'users' collection", async () => {
+      new UserService(mockClient, 'mock-database');
+
+      expect(collectionSpy).toHaveBeenCalledWith('users');
+      expect(databaseSpy).toHaveBeenCalledWith('mock-database');
     });
   });
 

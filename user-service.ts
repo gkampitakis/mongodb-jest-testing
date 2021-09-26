@@ -4,6 +4,13 @@ export function createClient(url: string, options?: MongoClientOptions) {
   return new MongoClient(url, options).connect();
 }
 
+export function createUserIndexes(client: MongoClient, database: string) {
+  return Promise.all([
+    client.db(database).createIndex('users', { email: 1 }, { unique: true }),
+    client.db(database).createIndex('users', { occupation: 1 })
+  ]);
+}
+
 interface UserDTO {
   _id: ObjectId;
   name: string;
@@ -18,7 +25,6 @@ export class UserService {
 
   constructor(private client: MongoClient, database: string) {
     this.collection = this.client.db(database).collection('users');
-    this.createIndex(database);
   }
 
   createUser(user: Omit<UserDTO, 'timestamp' | '_id'>) {
@@ -45,14 +51,5 @@ export class UserService {
 
   deleteUser(email: string) {
     return this.collection.deleteOne({ email });
-  }
-
-  private createIndex(database: string) {
-    return Promise.all([
-      this.client
-        .db(database)
-        .createIndex('users', { email: 1 }, { unique: true }),
-      this.client.db(database).createIndex('users', { occupation: 1 })
-    ]);
   }
 }

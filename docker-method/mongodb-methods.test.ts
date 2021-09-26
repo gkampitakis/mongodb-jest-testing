@@ -1,22 +1,17 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import { promisify } from 'util';
-import { UserService, createClient } from '../user-service';
-
-const database = 'mongodb-testing';
-const sleep = promisify(setTimeout);
+import { UserService, createClient, createUserIndexes } from '../user-service';
 
 // NOTE: this for removing the global mocks
 jest.deepUnmock('mongodb');
 
-function getIndexes(client: MongoClient, database: string) {
-  return client.db(database).collection('users').indexes();
-}
-
 describe('UserService', () => {
+  const database = 'mongodb-testing';
   let client: MongoClient;
+  let userService: UserService;
 
   beforeAll(async () => {
     client = await createClient('mongodb://localhost:27017');
+    userService = new UserService(client, database);
   });
 
   afterAll(async () => {
@@ -29,23 +24,17 @@ describe('UserService', () => {
     });
   });
 
-  describe('constructor', () => {
+  describe('createUserIndexes', () => {
     it('should create needed indexes', async () => {
-      new UserService(client, database);
-      // NOTE: we need the sleep as an async operation is executed in constructor
-      await sleep(150);
+      const indexes = await createUserIndexes(client, database);
 
-      const indexes = await getIndexes(client, database);
-
-      expect(indexes.length).toBe(3);
-      expect(indexes[1].key).toEqual({ email: 1 });
-      expect(indexes[2].key).toEqual({ occupation: 1 });
+      expect(indexes).toEqual(['email_1', 'occupation_1']);
     });
   });
 
   describe('createUser', () => {
     it('should create a new user', async () => {
-      const result = await new UserService(client, database).createUser({
+      const result = await userService.createUser({
         age: 17,
         email: 'mock@email.com',
         name: 'test-user',
@@ -58,9 +47,7 @@ describe('UserService', () => {
 
   describe('getUser', () => {
     it('should return the correct user', async () => {
-      const user = await new UserService(client, database).getUser(
-        'chef@email.com'
-      );
+      const user = await userService.getUser('chef@email.com');
 
       expect(user).toEqual({
         _id: expect.any(ObjectId),
@@ -75,10 +62,7 @@ describe('UserService', () => {
 
   describe('getUsersByOccupation', () => {
     it('should return all matching users', async () => {
-      const users = await new UserService(
-        client,
-        database
-      ).getUsersByOccupation('engineer');
+      const users = await userService.getUsersByOccupation('engineer');
 
       expect(users).toEqual([
         {
@@ -103,15 +87,14 @@ describe('UserService', () => {
 
   describe('updateUser', () => {
     it('should update the matched user', async () => {
-      const service = new UserService(client, database);
-      await service.createUser({
+      await userService.createUser({
         age: 17,
         email: 'mock@email.com',
         name: 'test-user',
         occupation: 'engineer'
       });
 
-      const { acknowledged, modifiedCount } = await service.updateUser(
+      const { acknowledged, modifiedCount } = await userService.updateUser(
         'mock@email.com',
         {
           age: 19
@@ -125,15 +108,14 @@ describe('UserService', () => {
 
   describe('deleteUser', () => {
     it('should delete the matched user', async () => {
-      const service = new UserService(client, database);
-      await service.createUser({
+      await userService.createUser({
         age: 17,
         email: 'mock@email.com',
         name: 'test-user',
         occupation: 'engineer'
       });
 
-      const { acknowledged, deletedCount } = await service.deleteUser(
+      const { acknowledged, deletedCount } = await userService.deleteUser(
         'mock@email.com'
       );
 

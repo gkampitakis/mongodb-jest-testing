@@ -30,8 +30,10 @@ In order to run tests locally you need
 
 ## Useful commands
 
-- Run jest in watch mode `yarn test:mock --watchAll`, useful for when writing tests.
-- Run docker compose from root folder `docker-compose -f ./docker-method/docker-compose.yaml <command> <flags>`
+- Run jest in watch mode `yarn test:mock --watchAll`, useful for when writing
+  tests.
+- Run docker compose from root folder
+  `docker-compose -f ./docker-method/docker-compose.yaml <command> <flags>`
 
 ## License
 
