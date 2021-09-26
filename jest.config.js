@@ -1,14 +1,12 @@
 module.exports = {
   verbose: true,
   collectCoverage: true,
-  moduleFileExtensions: ["ts", "js"],
+  moduleFileExtensions: ['ts', 'js'],
   transform: {
-    "\\.ts$": "ts-jest"
+    '\\.ts$': 'ts-jest'
   },
-  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.ts$",
-  collectCoverageFrom: [
-    "./**/*.ts"
-  ],
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.ts$',
+  collectCoverageFrom: ['./**/*.ts'],
   coverageThreshold: {
     global: {
       branches: 100,

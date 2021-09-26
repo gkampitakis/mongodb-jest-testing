@@ -34,15 +34,15 @@ const mongoFunctionality = {
   },
   find: (payload: unknown) => {
     findSpy(payload);
-    return { toArray: () => { } }
+    return { toArray: () => {} };
   },
   updateOne: (identifier: unknown, payload: unknown) => {
     updateOneSpy(identifier, payload);
   },
   deleteOne: (payload: unknown) => {
     deleteOneSpy(payload);
-  },
-}
+  }
+};
 
 export const mockClient = {
   db: (database: string) => {
@@ -52,11 +52,15 @@ export const mockClient = {
         collectionSpy(collection);
         return mongoFunctionality;
       },
-      createIndex: async (collection: string, index: IndexSpecification, options: CreateIndexesOptions) => {
+      createIndex: async (
+        collection: string,
+        index: IndexSpecification,
+        options: CreateIndexesOptions
+      ) => {
         createIndexSpy(collection, index, options);
         return 'mock-index';
       }
-    }
+    };
   }
 } as unknown as client;
 
