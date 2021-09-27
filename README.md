@@ -27,6 +27,7 @@ In order to run tests locally you need
 - Execute tests
   - For mocks `yarn test:mock` or `npm run test:mock`
   - For docker `yarn test:docker` or `npm run test:docker`
+  - For mongodb-memory-server `yarn test:memory` or `npm run test:memory`
 
 ## Useful commands
 
