@@ -1,5 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import { UserService, createClient, createUserIndexes } from '../user-service';
+import { seed } from './seed';
 
 // NOTE: this for removing the global mocks
 jest.deepUnmock('mongodb');
@@ -13,7 +14,6 @@ function seedData(
 }
 describe('UserService', () => {
   const database = 'mongodb-testing';
-  const seed = require('./seed.js');
 
   let client: MongoClient;
   let userService: UserService;

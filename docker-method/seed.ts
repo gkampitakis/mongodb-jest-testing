@@ -1,4 +1,4 @@
-module.exports = [
+export const seed = [
   {
     name: 'mock-engineer',
     email: 'engineer@email.com',
