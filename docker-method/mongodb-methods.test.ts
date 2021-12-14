@@ -1,20 +1,31 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import { UserService, createClient, createUserIndexes } from '../user-service';
+import { seed } from './seed';
 
 // NOTE: this for removing the global mocks
 jest.deepUnmock('mongodb');
-
+function seedData(
+  client: MongoClient,
+  data: any,
+  database: string,
+  collection: string
+) {
+  return client.db(database).collection(collection).insertMany(data);
+}
 describe('UserService', () => {
   const database = 'mongodb-testing';
+
   let client: MongoClient;
   let userService: UserService;
 
   beforeAll(async () => {
     client = await createClient('mongodb://localhost:27017');
+    await seedData(client, seed, database, 'users');
     userService = new UserService(client, database);
   });
 
   afterAll(async () => {
+    await client.db(database).collection('users').deleteMany({});
     await client.close();
   });
 

@@ -1,8 +1,4 @@
-db = db.getSiblingDB('mongodb-testing');
-
-db.createCollection('users');
-
-db.users.insertMany([
+export const seed = [
   {
     name: 'mock-engineer',
     email: 'engineer@email.com',
@@ -31,4 +27,4 @@ db.users.insertMany([
     occupation: 'actress',
     timestamp: '2021-09-26T15:48:13.209Z'
   }
-]);
+];
